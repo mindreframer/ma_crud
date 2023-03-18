@@ -1,30 +1,67 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: ["main"] 
+  pull_request:
+    branches: ["main"] 
+
+env:
+  MIX_ENV: test
 
 jobs:
   lint-and-test:
-    runs-on: ubuntu-20.04
-    env:
-      MIX_ENV: test
+    runs-on: ubuntu-latest
+    name: Test on OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
 
-    name: Lint
+    services:
+      db:
+        image: postgres:14-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ma_crud_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 1s
+          --health-retries 20
+
+    strategy:
+      matrix:
+        otp: ["25.0.4"]
+        elixir: ["1.14.2"]
+
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: erlef/setup-elixir@v1
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
         with:
-          otp-version: "25"
-          elixir-version: "1.14"
-
-      - uses: actions/cache@v2
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-elixir-deps
         with:
-          path: |
-            _build
-            deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
-
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
       - run: mix deps.get
       - run: mix deps.compile
       - run: mix format --check-formatted
