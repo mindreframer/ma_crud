@@ -62,7 +62,7 @@ defmodule MaCrud.Helper do
     only
   end
 
-  def filter_functions_to_be_generated(all_functions, _only, [_ | _] =  except) do
+  def filter_functions_to_be_generated(all_functions, _only, [_ | _] = except) do
     all_functions -- except
   end
 

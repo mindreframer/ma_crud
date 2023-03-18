@@ -8,9 +8,8 @@ defmodule MaCrud.MixProject do
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps(), 
-      aliases: aliases(), 
-
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -33,7 +32,6 @@ defmodule MaCrud.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      
       {:ecto, ">= 3.0.0"},
       {:gettext, ">= 0.0.0"},
       {:ecto_sql, ">= 3.0.0", only: :test},

@@ -290,8 +290,20 @@ defmodule MaCrud.Context do
     name = MaCrud.Helper.get_underscored_name(schema_module)
     pluralized_name = MaCrud.Helper.get_pluralized_name(schema_module, __CALLER__)
 
-    for func <- MaCrud.Helper.get_functions_to_be_generated(__CALLER__.module, @all_functions, @helper_functions, opts) do
-      MaCrud.ContextFunctionsGenerator.generate_function(func, name, pluralized_name, schema_module, opts)
+    for func <-
+          MaCrud.Helper.get_functions_to_be_generated(
+            __CALLER__.module,
+            @all_functions,
+            @helper_functions,
+            opts
+          ) do
+      MaCrud.ContextFunctionsGenerator.generate_function(
+        func,
+        name,
+        pluralized_name,
+        schema_module,
+        opts
+      )
     end
   end
 
@@ -309,7 +321,7 @@ defmodule MaCrud.Context do
       only: only || [],
       except: except || [],
       check_constraints_on_delete: [],
-      repo: repo,
+      repo: repo
     ]
   end
 end

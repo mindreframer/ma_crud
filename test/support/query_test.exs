@@ -129,7 +129,9 @@ defmodule MaCrud.QueryTest do
     end
 
     test "works with list of maps in order by" do
-      pagination_params = %{order_by: [%{field: "age", order: :asc}, %{field: "username", order: :desc}]}
+      pagination_params = %{
+        order_by: [%{field: "age", order: :asc}, %{field: "username", order: :desc}]
+      }
 
       users =
         User

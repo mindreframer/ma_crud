@@ -25,7 +25,10 @@ defmodule MaCrud.ContextTest do
       assert {:ok, %{} = user1} = Repo.insert(User.changeset(%User{}, @user))
       assert {:ok, %{} = user2} = Repo.insert(User.changeset(%User{}, @user2))
       assert {:ok, %{} = user3} = Repo.insert(User.changeset(%User{}, @user3))
-      assert {:ok, %{} = post} = Repo.insert(Post.changeset(%Post{}, %{title: "title", user_id: user1.id}))
+
+      assert {:ok, %{} = post} =
+               Repo.insert(Post.changeset(%Post{}, %{title: "title", user_id: user1.id}))
+
       %{user1: user1, user2: user2, user3: user3, post: post}
     end
 
@@ -44,7 +47,8 @@ defmodule MaCrud.ContextTest do
     end
 
     test "list_with_assocs/1", %{user1: user1, user2: user2, user3: user3} do
-      assert UserContext.list_users_with_assocs(:posts) == Repo.preload([user1, user2, user3], :posts)
+      assert UserContext.list_users_with_assocs(:posts) ==
+               Repo.preload([user1, user2, user3], :posts)
     end
 
     test "list/1", %{user1: user1} do
@@ -80,17 +84,18 @@ defmodule MaCrud.ContextTest do
 
     test "get!/1", %{user1: user1} do
       assert UserContext.get_user!(user1.id) == user1
+
       assert_raise Ecto.NoResultsError, fn ->
         UserContext.get_user!(-1)
       end
     end
 
     test "get/2", %{user1: user1} do
-      assert UserContext.get_user(user1.id, [assocs: :posts]) == Repo.preload(user1, :posts)
+      assert UserContext.get_user(user1.id, assocs: :posts) == Repo.preload(user1, :posts)
     end
 
     test "get!/2", %{user1: user1} do
-      assert UserContext.get_user!(user1.id, [assocs: :posts]) == Repo.preload(user1, :posts)
+      assert UserContext.get_user!(user1.id, assocs: :posts) == Repo.preload(user1, :posts)
 
       assert_raise Ecto.NoResultsError, fn ->
         UserContext.get_user!(-1, [:posts])
@@ -104,17 +109,20 @@ defmodule MaCrud.ContextTest do
 
     test "get_by!/1", %{user1: user1} do
       assert UserContext.get_user_by!(username: user1.username) == user1
+
       assert_raise Ecto.NoResultsError, fn ->
         UserContext.get_user_by!(username: "inexistent")
       end
     end
 
     test "get_by/2", %{user1: user1} do
-      assert UserContext.get_user_by([username: user1.username], [assocs: :posts]) == Repo.preload(user1, :posts)
+      assert UserContext.get_user_by([username: user1.username], assocs: :posts) ==
+               Repo.preload(user1, :posts)
     end
 
     test "get_by!/2", %{user1: user1} do
-      assert UserContext.get_user_by!([username: user1.username], [assocs: :posts]) == Repo.preload(user1, :posts)
+      assert UserContext.get_user_by!([username: user1.username], assocs: :posts) ==
+               Repo.preload(user1, :posts)
 
       assert_raise Ecto.NoResultsError, fn ->
         UserContext.get_user_by!([username: "inexistent"], [:posts])
@@ -126,7 +134,8 @@ defmodule MaCrud.ContextTest do
     end
 
     test "get_by_with_assocs/2", %{user1: user1} do
-      assert UserContext.get_user_by_with_assocs([username: user1.username], :posts) == Repo.preload(user1, :posts)
+      assert UserContext.get_user_by_with_assocs([username: user1.username], :posts) ==
+               Repo.preload(user1, :posts)
     end
 
     test "get_with_assocs!/2", %{user1: user1} do
@@ -138,7 +147,8 @@ defmodule MaCrud.ContextTest do
     end
 
     test "get_by_with_assocs!/2", %{user1: user1} do
-      assert UserContext.get_user_by_with_assocs!([username: user1.username], :posts) == Repo.preload(user1, :posts)
+      assert UserContext.get_user_by_with_assocs!([username: user1.username], :posts) ==
+               Repo.preload(user1, :posts)
 
       assert_raise Ecto.NoResultsError, fn ->
         UserContext.get_user_by_with_assocs!([username: "inexistent"], :posts)
@@ -155,12 +165,20 @@ defmodule MaCrud.ContextTest do
 
     test "update_with_assocs/3 with correct arguments", %{user2: user2} do
       assert {:ok, %User{username: "new", posts: [%Post{title: "post"}]}} =
-        UserContext.update_user_with_assocs(user2, %{username: "new", posts: [%{title: "post"}]}, :posts)
+               UserContext.update_user_with_assocs(
+                 user2,
+                 %{username: "new", posts: [%{title: "post"}]},
+                 :posts
+               )
     end
 
     test "update_with_assocs!/3", %{user2: user2} do
       assert %User{username: "new", posts: [%Post{title: "post"}]} =
-        UserContext.update_user_with_assocs!(user2, %{username: "new", posts: [%{title: "post"}]}, :posts)
+               UserContext.update_user_with_assocs!(
+                 user2,
+                 %{username: "new", posts: [%{title: "post"}]},
+                 :posts
+               )
     end
 
     test "delete/1 with correct arguments", %{user2: user2} do
@@ -184,7 +202,10 @@ defmodule MaCrud.ContextTest do
       end
 
       assert {:ok, %{} = user} = ContextDelete.create_user(@user)
-      assert {:ok, %{} = _post} = ContextDelete.create_post(%{title: @post.title, user_id: user.id})
+
+      assert {:ok, %{} = _post} =
+               ContextDelete.create_post(%{title: @post.title, user_id: user.id})
+
       assert {:error, %Ecto.Changeset{}} = ContextDelete.delete_user(user)
     end
 
@@ -202,10 +223,10 @@ defmodule MaCrud.ContextTest do
       assert {:ok, %{} = user} = ContextDeleteList.create_user(@user)
 
       assert {:ok, %{} = post} =
-              ContextDeleteList.create_post(%{title: @post.title, user_id: user.id})
+               ContextDeleteList.create_post(%{title: @post.title, user_id: user.id})
 
       assert {:ok, %{} = like} =
-              ContextDeleteList.create_like(%{post_id: post.id, user_id: user.id})
+               ContextDeleteList.create_like(%{post_id: post.id, user_id: user.id})
 
       assert {:error, %Ecto.Changeset{}} = ContextDeleteList.delete_user(user)
 
@@ -276,7 +297,9 @@ defmodule MaCrud.ContextTest do
 
     test "using except" do
       defmodule ContextExcept do
-        MaCrud.Context.generate_functions(MaCrud.User, except: [:exists, :get, :update, :list, :delete])
+        MaCrud.Context.generate_functions(MaCrud.User,
+          except: [:exists, :get, :update, :list, :delete]
+        )
       end
 
       assert Enum.member?(ContextExcept.__info__(:functions), {:create_user, 1})
@@ -319,7 +342,9 @@ defmodule MaCrud.ContextTest do
         MaCrud.Context.generate_functions(MaCrud.CamelizedSchemaName)
       end
 
-      assert {:ok, %MaCrud.CamelizedSchemaName{content: "x"} = record} = ContextUnderscore.create_camelized_schema_name(%{content: "x"})
+      assert {:ok, %MaCrud.CamelizedSchemaName{content: "x"} = record} =
+               ContextUnderscore.create_camelized_schema_name(%{content: "x"})
+
       assert ContextUnderscore.list_camelized_schema_names() == [record]
     end
 
@@ -328,7 +353,9 @@ defmodule MaCrud.ContextTest do
         MaCrud.Context.generate_functions(MaCrud.Category)
       end
 
-      assert {:ok, %MaCrud.Category{content: "x"} = record} = ContextPluralize.create_category(%{content: "x"})
+      assert {:ok, %MaCrud.Category{content: "x"} = record} =
+               ContextPluralize.create_category(%{content: "x"})
+
       assert ContextPluralize.list_categories_schema_source() == [record]
     end
   end
@@ -338,7 +365,7 @@ defmodule MaCrud.ContextTest do
       defmodule ContextRepoDefault do
         alias MaCrud.User
 
-        MaCrud.Context.default repo: MaCrud.Repo
+        MaCrud.Context.default(repo: MaCrud.Repo)
         MaCrud.Context.generate_functions(User)
       end
 

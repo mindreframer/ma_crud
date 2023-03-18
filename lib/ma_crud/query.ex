@@ -132,7 +132,8 @@ defmodule MaCrud.Query do
     end)
   end
 
-  defp parse_order_by_args(sorting_order, order_by), do: parse_order_by_args(sorting_order, List.wrap(order_by))
+  defp parse_order_by_args(sorting_order, order_by),
+    do: parse_order_by_args(sorting_order, List.wrap(order_by))
 
   defp to_atom(value) when is_atom(value), do: value
   defp to_atom(value) when is_binary(value), do: String.to_atom(value)

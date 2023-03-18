@@ -166,14 +166,24 @@ defmodule MaCrud.ContextFunctionsGenerator do
         |> unquote(get_repo_module(opts)).update!(repo_opts)
       end
 
-      def unquote(:"update_#{name}_with_assocs")(%unquote(module){} = struct, attrs, assocs, repo_opts \\ []) do
+      def unquote(:"update_#{name}_with_assocs")(
+            %unquote(module){} = struct,
+            attrs,
+            assocs,
+            repo_opts \\ []
+          ) do
         struct
         |> unquote(get_repo_module(opts)).preload(assocs)
         |> unquote(module).unquote(opts[:update])(attrs)
         |> unquote(get_repo_module(opts)).update(repo_opts)
       end
 
-      def unquote(:"update_#{name}_with_assocs!")(%unquote(module){} = struct, attrs, assocs, repo_opts \\ []) do
+      def unquote(:"update_#{name}_with_assocs!")(
+            %unquote(module){} = struct,
+            attrs,
+            assocs,
+            repo_opts \\ []
+          ) do
         struct
         |> unquote(get_repo_module(opts)).preload(assocs)
         |> unquote(module).unquote(opts[:update])(attrs)
