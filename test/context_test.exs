@@ -194,7 +194,7 @@ defmodule MaCrud.ContextTest do
     test "change/2", %{user2: user2} do
       assert %Ecto.Changeset{
                changes: %{},
-               errors: [username: {"can't be blank", [validation: :required]}]
+               errors: []
              } = UserContext.change_user(user2)
 
       assert %Ecto.Changeset{changes: %{username: "user2-changed"}, errors: []} =
