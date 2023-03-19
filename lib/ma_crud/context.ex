@@ -200,6 +200,11 @@ defmodule MaCrud.Context do
           |> Repo.delete!()
         end
 
+        def change_my_schema(%MySchema{} = my_schema, attrs \\ %{}) do
+          my_schema
+          |> MySchema.changeset(attrs)
+        end
+
         # Function to check no_assoc_constraints, always generated.
         defp check_assocs(changeset, nil), do: changeset
         defp check_assocs(changeset, constraints) do

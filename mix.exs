@@ -2,13 +2,14 @@ defmodule MaCrud.MixProject do
   use Mix.Project
 
   @github_url "https://github.com/mindreframer/ma_crud"
+  @version "0.1.1"
 
   def project do
     [
       app: :ma_crud,
       description: "MaCrud - painless CRUD contexts",
       source_url: @github_url,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -36,7 +37,7 @@ defmodule MaCrud.MixProject do
 
   defp package do
     [
-      files: ~w(lib mix.exs README*),
+      files: ~w(lib mix.exs README* CHANGELOG*),
       licenses: ["MIT"],
       links: %{
         "GitHub" => @github_url,
