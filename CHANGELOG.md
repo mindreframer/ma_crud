@@ -1,3 +1,8 @@
+## v0.1.3 (2023-03-19)
+
+  * [chore] remove deprecated functions
+  * [refactor] improve AST even more, by generating helper function to get the repo
+
 ## v0.1.2 (2023-03-19)
 
   * [fix] `resource_name_change` function was using an empty struct, and not the argument

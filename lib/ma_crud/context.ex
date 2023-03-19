@@ -188,6 +188,7 @@ defmodule MaCrud.Context do
   @all_functions ~w(exists get list count search filter create update delete change)a
   # Always generate helper functions since they are used in the other generated functions
   @helper_functions ~w(check_assocs)a
+  @always_gen_function ~w(get_repo)a
 
   @doc """
   Sets default options for the context.
@@ -272,6 +273,7 @@ defmodule MaCrud.Context do
             __CALLER__.module,
             @all_functions,
             @helper_functions,
+            @always_gen_function,
             opts
           ) do
       MaCrud.ContextFunctionsGenerator.generate_function(

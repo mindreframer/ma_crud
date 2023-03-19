@@ -10,32 +10,52 @@ defmodule MaCrud.ContextFunctionsGenerator do
     end
   end
 
-  def generate_function(:exists, name, _pluralized_name, module, opts) do
+  def generate_function(:exists, name, _pluralized_name, module, _opts) do
     quote do
+      @doc """
+      Lookup #{unquote(name)} based on id
+      """
       def unquote(:"#{name}_exists?")(id) do
         import Ecto.Query, only: [from: 2]
+        repo = unquote(:"repo_for_#{name}")()
 
         query = from(x in unquote(module), where: x.id == ^id)
 
-        unquote(get_repo_module(opts)).exists?(query)
+        repo.exists?(query)
       end
     end
   end
 
-  def generate_function(:get, name, _pluralized_name, module, opts) do
+  def generate_function(:get, name, _pluralized_name, module, _opts) do
     quote do
+      @doc """
+      Get the #{unquote(name)} schema by id.
+
+      Args:
+
+        `opts`:
+          `assocs`: list of associations to preload
+      """
       def unquote(:"get_#{name}")(id, opts \\ []) do
         assocs = opts[:assocs] || []
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> repo.get(id, opts)
         |> repo.preload(assocs)
       end
 
+      @doc """
+      Get the #{unquote(name)} schema by a field.
+
+      Args:
+
+        `opts`:
+          `assocs`: list of associations to preload
+      """
       def unquote(:"get_#{name}_by")(clauses, opts \\ []) do
         assocs = opts[:assocs] || []
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> repo.get_by(clauses, opts)
@@ -44,7 +64,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
 
       def unquote(:"get_#{name}!")(id, opts \\ []) do
         assocs = opts[:assocs] || []
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> repo.get!(id, opts)
@@ -53,7 +73,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
 
       def unquote(:"get_#{name}_by!")(clauses, opts \\ []) do
         assocs = opts[:assocs] || []
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> repo.get_by!(clauses, opts)
@@ -62,10 +82,10 @@ defmodule MaCrud.ContextFunctionsGenerator do
     end
   end
 
-  def generate_function(:list, _name, pluralized_name, module, opts) do
+  def generate_function(:list, name, pluralized_name, module, _opts) do
     quote do
       def unquote(:"list_#{pluralized_name}")(opts \\ [], repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> MaCrud.Query.list(opts)
@@ -73,7 +93,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
       end
 
       def unquote(:"list_#{pluralized_name}_with_assocs")(assocs, opts \\ [], repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> MaCrud.Query.list(opts)
@@ -83,10 +103,10 @@ defmodule MaCrud.ContextFunctionsGenerator do
     end
   end
 
-  def generate_function(:count, _name, pluralized_name, module, opts) do
+  def generate_function(:count, name, pluralized_name, module, _opts) do
     quote do
       def unquote(:"count_#{pluralized_name}")(field \\ :id, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> repo.aggregate(:count, field, repo_opts)
@@ -94,11 +114,11 @@ defmodule MaCrud.ContextFunctionsGenerator do
     end
   end
 
-  def generate_function(:search, _name, pluralized_name, module, opts) do
+  def generate_function(:search, name, pluralized_name, module, _opts) do
     quote do
       def unquote(:"search_#{pluralized_name}")(search_term, repo_opts \\ []) do
         module_fields = unquote(module).__schema__(:fields)
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> MaCrud.Query.search(search_term, module_fields)
@@ -107,10 +127,10 @@ defmodule MaCrud.ContextFunctionsGenerator do
     end
   end
 
-  def generate_function(:filter, _name, pluralized_name, module, opts) do
+  def generate_function(:filter, name, pluralized_name, module, _opts) do
     quote do
       def unquote(:"filter_#{pluralized_name}")(filters, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> MaCrud.Query.filter(filters)
@@ -122,7 +142,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
   def generate_function(:create, name, _pluralized_name, module, opts) do
     quote do
       def unquote(:"create_#{name}")(attrs, opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> struct()
@@ -131,7 +151,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
       end
 
       def unquote(:"create_#{name}!")(attrs, opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         unquote(module)
         |> struct()
@@ -144,7 +164,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
   def generate_function(:update, name, _pluralized_name, module, opts) do
     quote do
       def unquote(:"update_#{name}")(%unquote(module){} = struct, attrs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> unquote(module).unquote(opts[:update])(attrs)
@@ -152,7 +172,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
       end
 
       def unquote(:"update_#{name}!")(%unquote(module){} = struct, attrs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> unquote(module).unquote(opts[:update])(attrs)
@@ -165,7 +185,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
             assocs,
             repo_opts \\ []
           ) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> repo.preload(assocs)
@@ -179,7 +199,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
             assocs,
             repo_opts \\ []
           ) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> repo.preload(assocs)
@@ -192,7 +212,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
   def generate_function(:delete, name, _pluralized_name, module, opts) do
     quote do
       def unquote(:"delete_#{name}")(%unquote(module){} = struct, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> Ecto.Changeset.change()
@@ -201,7 +221,7 @@ defmodule MaCrud.ContextFunctionsGenerator do
       end
 
       def unquote(:"delete_#{name}!")(%unquote(module){} = struct, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
+        repo = unquote(:"repo_for_#{name}")()
 
         struct
         |> Ecto.Changeset.change()
@@ -217,6 +237,14 @@ defmodule MaCrud.ContextFunctionsGenerator do
         Enum.reduce(constraints, changeset, fn i, acc ->
           Ecto.Changeset.no_assoc_constraint(acc, i)
         end)
+      end
+    end
+  end
+
+  def generate_function(:get_repo, name, _pluralized_name, _module, opts) do
+    quote do
+      defp unquote(:"repo_for_#{name}")() do
+        unquote(get_repo_module(opts))
       end
     end
   end

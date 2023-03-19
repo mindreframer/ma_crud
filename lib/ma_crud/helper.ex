@@ -43,14 +43,20 @@ defmodule MaCrud.Helper do
   @doc """
   Uses an attribute in the caller's module to make sure the helper functions are only generated once per module.
   """
-  def get_functions_to_be_generated(module, all_functions, helper_functions, opts) do
+  def get_functions_to_be_generated(
+        module,
+        all_functions,
+        helper_functions,
+        always_gen_function,
+        opts
+      ) do
     functions = filter_functions_to_be_generated(all_functions, opts[:only], opts[:except])
 
     if Module.get_attribute(module, :called) do
-      functions
+      always_gen_function ++ functions
     else
       Module.put_attribute(module, :called, true)
-      helper_functions ++ functions
+      helper_functions ++ always_gen_function ++ functions
     end
   end
 
