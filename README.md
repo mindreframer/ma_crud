@@ -2,8 +2,21 @@
 
 Hard fork from https://github.com/jungsoft/crudry/ without dependency on Absinthe.
 
+## Installation
 
-# Usage
+The package can be installed by adding `ma_crud` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:ma_crud, "~> 0.1.0"}
+  ]
+end
+```
+The docs can be found at <https://hexdocs.pm/ma_crud>.
+
+
+## Usage
 
 ```elixir
 defmodule MyApp.Comment do
@@ -343,21 +356,3 @@ defmodule CommentsContext do
   end
 end
 ```
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ma_crud` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:ma_crud, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/ma_crud>.
-
