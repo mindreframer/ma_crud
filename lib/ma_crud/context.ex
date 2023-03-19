@@ -208,7 +208,7 @@ defmodule MaCrud.Context do
       end
   """
 
-  @all_functions ~w(exists get list count search filter create update delete)a
+  @all_functions ~w(exists get list count search filter create update delete change)a
   # Always generate helper functions since they are used in the other generated functions
   @helper_functions ~w(check_assocs)a
 

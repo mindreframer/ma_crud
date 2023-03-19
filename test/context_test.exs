@@ -190,6 +190,16 @@ defmodule MaCrud.ContextTest do
       assert user2 = UserContext.delete_user!(user2)
       assert UserContext.get_user(user2.id) == nil
     end
+
+    test "change/2", %{user2: user2} do
+      assert %Ecto.Changeset{
+               changes: %{},
+               errors: [username: {"can't be blank", [validation: :required]}]
+             } = UserContext.change_user(user2)
+
+      assert %Ecto.Changeset{changes: %{username: "user2-changed"}, errors: []} =
+               UserContext.change_user(user2, %{username: "user2-changed"})
+    end
   end
 
   describe "Delete with check constraints" do

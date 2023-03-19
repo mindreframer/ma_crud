@@ -219,4 +219,14 @@ defmodule MaCrud.ContextFunctionsGenerator do
       end
     end
   end
+
+  def generate_function(:change, name, _pluralized_name, module, opts) do
+    quote do
+      def unquote(:"change_#{name}")(%unquote(module){} = struct, attrs \\ %{}) do
+        unquote(module)
+        |> struct()
+        |> unquote(module).unquote(opts[:create])(attrs)
+      end
+    end
+  end
 end
