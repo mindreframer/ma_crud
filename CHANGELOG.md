@@ -1,3 +1,21 @@
+## v0.1.4 (2023-03-19)
+
+  * [feat] use top-level MaCrud module to setup contexts
+  ```elixir
+  defmodule UsersContext do
+    use MaCrud
+    alias Example.Like
+    alias Example.User
+    alias Example.Post
+    alias Example.Repo
+
+    MaCrud.generate(User, check_constraints_on_delete: [:posts, :likes])
+    MaCrud.generate(Post)
+    MaCrud.generate(Like)
+  end
+  ```
+
+
 ## v0.1.3 (2023-03-19)
 
   * [chore] remove deprecated functions
