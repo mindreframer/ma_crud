@@ -42,24 +42,6 @@ defmodule MaCrud.ContextFunctionsGenerator do
         |> repo.preload(assocs)
       end
 
-      @deprecated unquote("Use get_#{name}/2 instead")
-      def unquote(:"get_#{name}_with_assocs")(id, assocs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
-
-        unquote(module)
-        |> repo.get(id, repo_opts)
-        |> repo.preload(assocs)
-      end
-
-      @deprecated unquote("Use get_#{name}_by/2 instead")
-      def unquote(:"get_#{name}_by_with_assocs")(clauses, assocs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
-
-        unquote(module)
-        |> repo.get_by(clauses, repo_opts)
-        |> repo.preload(assocs)
-      end
-
       def unquote(:"get_#{name}!")(id, opts \\ []) do
         assocs = opts[:assocs] || []
         repo = unquote(get_repo_module(opts))
@@ -75,24 +57,6 @@ defmodule MaCrud.ContextFunctionsGenerator do
 
         unquote(module)
         |> repo.get_by!(clauses, opts)
-        |> repo.preload(assocs)
-      end
-
-      @deprecated unquote("Use get_#{name}!/2 instead")
-      def unquote(:"get_#{name}_with_assocs!")(id, assocs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
-
-        unquote(module)
-        |> repo.get!(id, repo_opts)
-        |> repo.preload(assocs)
-      end
-
-      @deprecated unquote("Use get_#{name}_by!/2 instead")
-      def unquote(:"get_#{name}_by_with_assocs!")(clauses, assocs, repo_opts \\ []) do
-        repo = unquote(get_repo_module(opts))
-
-        unquote(module)
-        |> repo.get_by!(clauses, repo_opts)
         |> repo.preload(assocs)
       end
     end

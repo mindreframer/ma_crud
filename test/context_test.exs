@@ -129,32 +129,6 @@ defmodule MaCrud.ContextTest do
       end
     end
 
-    test "get_with_assocs/2", %{user1: user1} do
-      assert UserContext.get_user_with_assocs(user1.id, :posts) == Repo.preload(user1, :posts)
-    end
-
-    test "get_by_with_assocs/2", %{user1: user1} do
-      assert UserContext.get_user_by_with_assocs([username: user1.username], :posts) ==
-               Repo.preload(user1, :posts)
-    end
-
-    test "get_with_assocs!/2", %{user1: user1} do
-      assert UserContext.get_user_with_assocs!(user1.id, :posts) == Repo.preload(user1, :posts)
-
-      assert_raise Ecto.NoResultsError, fn ->
-        UserContext.get_user_with_assocs!(-1, :posts)
-      end
-    end
-
-    test "get_by_with_assocs!/2", %{user1: user1} do
-      assert UserContext.get_user_by_with_assocs!([username: user1.username], :posts) ==
-               Repo.preload(user1, :posts)
-
-      assert_raise Ecto.NoResultsError, fn ->
-        UserContext.get_user_by_with_assocs!([username: "inexistent"], :posts)
-      end
-    end
-
     test "update/2 with correct arguments", %{user1: user1} do
       assert {:ok, %User{username: "new"}} = UserContext.update_user(user1, %{username: "new"})
     end

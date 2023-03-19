@@ -55,20 +55,6 @@ defmodule MaCrud.Context do
           |> Repo.preload(assocs)
         end
 
-        @deprecated "Use get_schema/2 instead"
-        def get_my_schema_with_assocs(id, assocs) do
-          MySchema
-          |> Repo.get(id)
-          |> Repo.preload(assocs)
-        end
-
-        @deprecated "Use get_schema!/2 instead"
-        def get_my_schema_with_assocs!(id, assocs) do
-          MySchema
-          |> Repo.get!(id)
-          |> Repo.preload(assocs)
-        end
-
         def get_my_schema_by(clauses, opts \\\\ []) do
           assocs = opts[:assoc] || []
 
@@ -80,20 +66,6 @@ defmodule MaCrud.Context do
         def get_my_schema_by!(clauses, opts \\\\ []) do
           assocs = opts[:assoc] || []
 
-          MySchema
-          |> Repo.get_by!(clauses)
-          |> Repo.preload(assocs)
-        end
-
-        @deprecated "Use get_my_schema_by/2 instead"
-        def get_my_schema_by_with_assocs(clauses, assocs) do
-          MySchema
-          |> Repo.get_by(clauses)
-          |> Repo.preload(assocs)
-        end
-
-        @deprecated "Use get_my_schema_by!/2 instead"
-        def get_my_schema_by_with_assocs!(clauses, assocs) do
           MySchema
           |> Repo.get_by!(clauses)
           |> Repo.preload(assocs)
