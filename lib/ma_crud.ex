@@ -16,7 +16,6 @@ defmodule MaCrud do
     end
   end
 
-
   @doc """
   ## Examples
 
@@ -33,7 +32,7 @@ defmodule MaCrud do
   defmacro default(opts) do
     quote do
       require MaCrud.Context
-      MaCrud.Context.default unquote(opts)
+      MaCrud.Context.default(unquote(opts))
     end
   end
 end

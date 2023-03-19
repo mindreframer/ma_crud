@@ -41,7 +41,7 @@ defmodule MaCrud.MixProject do
       licenses: ["MIT"],
       links: %{
         "GitHub" => @github_url,
-        "Docs" => "https://hexdocs.pm/ma_crud/"
+        "CHANGELOG" => "https://github.com/mindreframer/ma_crud/blob/main/CHANGELOG.md"
       }
     ]
   end

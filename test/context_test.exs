@@ -289,6 +289,7 @@ defmodule MaCrud.ContextTest do
     test "using except" do
       defmodule ContextExcept do
         use MaCrud
+
         MaCrud.generate(MaCrud.User,
           except: [:exists, :get, :update, :list, :delete]
         )
