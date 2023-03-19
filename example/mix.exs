@@ -24,7 +24,11 @@ defmodule Example.MixProject do
     [
       {:ma_crud, path: ".."},
       {:ecto_sql, ">= 3.0.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"}, 
+      {:phoenix, ">= 1.7.1"}, 
+      {:inflex, "~> 2.0.0"}, 
+      {:scrivener_ecto, "~> 2.7"}
+      # {:scrivener_ecto, path: "deps/scrivener_ecto"}
     ]
   end
 end
