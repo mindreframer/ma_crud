@@ -1,6 +1,6 @@
 # MaCrud
 
-**TODO: Add description**
+Hard fork from https://github.com/jungsoft/crudry/ without dependency on Absinthe. 
 
 ## Installation
 

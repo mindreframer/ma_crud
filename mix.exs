@@ -1,15 +1,20 @@
 defmodule MaCrud.MixProject do
   use Mix.Project
 
+  @github_url "https://github.com/mindreframer/ma_crud"
+
   def project do
     [
       app: :ma_crud,
+      description: "MaCrud - painless CRUD contexts",
+      source_url: @github_url,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
-      aliases: aliases()
+      package: package()
     ]
   end
 
@@ -26,6 +31,17 @@ defmodule MaCrud.MixProject do
   defp aliases do
     [
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
+    ]
+  end
+
+  defp package do
+    [
+      files: ~w(lib mix.exs README*),
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => @github_url,
+        "Docs" => "https://hexdocs.pm/ma_crud/"
+      }
     ]
   end
 
