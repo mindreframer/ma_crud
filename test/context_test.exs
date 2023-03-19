@@ -1,6 +1,5 @@
 defmodule MaCrud.ContextTest do
   use ExUnit.Case
-  doctest MaCrud.Context
 
   alias MaCrud.Repo
   alias MaCrud.{Post, User}
@@ -16,9 +15,10 @@ defmodule MaCrud.ContextTest do
 
   describe "Basic CRUD functions" do
     defmodule UserContext do
+      use MaCrud
       alias MaCrud.User
 
-      MaCrud.Context.generate_functions(User)
+      MaCrud.generate(User)
     end
 
     setup do
@@ -179,10 +179,11 @@ defmodule MaCrud.ContextTest do
   describe "Delete with check constraints" do
     test "return changeset error when deleting a parent record with a child associated constraint" do
       defmodule ContextDelete do
+        use MaCrud
         alias MaCrud.{User, Post}
 
-        MaCrud.Context.generate_functions(User, check_constraints_on_delete: [:posts])
-        MaCrud.Context.generate_functions(Post)
+        MaCrud.generate(User, check_constraints_on_delete: [:posts])
+        MaCrud.generate(Post)
       end
 
       assert {:ok, %{} = user} = ContextDelete.create_user(@user)
@@ -195,13 +196,14 @@ defmodule MaCrud.ContextTest do
 
     test "return changeset error when deleting a parent record with childrens associated constraint" do
       defmodule ContextDeleteList do
+        use MaCrud
         alias MaCrud.Like
         alias MaCrud.User
         alias MaCrud.Post
 
-        MaCrud.Context.generate_functions(User, check_constraints_on_delete: [:posts, :likes])
-        MaCrud.Context.generate_functions(Post)
-        MaCrud.Context.generate_functions(Like)
+        MaCrud.generate(User, check_constraints_on_delete: [:posts, :likes])
+        MaCrud.generate(Post)
+        MaCrud.generate(Like)
       end
 
       assert {:ok, %{} = user} = ContextDeleteList.create_user(@user)
@@ -224,7 +226,8 @@ defmodule MaCrud.ContextTest do
   describe "Define custom changeset" do
     test "allow defining of create changeset" do
       defmodule ContextCreate do
-        MaCrud.Context.generate_functions(MaCrud.User, create: :create_changeset)
+        use MaCrud
+        MaCrud.generate(MaCrud.User, create: :create_changeset)
       end
 
       assert {:ok, %User{username: "create_changeset"}} = ContextCreate.create_user(@user)
@@ -232,7 +235,8 @@ defmodule MaCrud.ContextTest do
 
     test "allow defining of update changeset" do
       defmodule ContextUpdate do
-        MaCrud.Context.generate_functions(MaCrud.User, update: :update_changeset)
+        use MaCrud
+        MaCrud.generate(MaCrud.User, update: :update_changeset)
       end
 
       assert {:ok, %User{} = user} = ContextUpdate.create_user(@user)
@@ -241,9 +245,10 @@ defmodule MaCrud.ContextTest do
 
     test "allow defining of both changeset functions" do
       defmodule ContextBoth do
+        use MaCrud
         alias MaCrud.Repo
 
-        MaCrud.Context.generate_functions(MaCrud.User,
+        MaCrud.generate(MaCrud.User,
           create: :create_changeset,
           update: :update_changeset
         )
@@ -255,8 +260,9 @@ defmodule MaCrud.ContextTest do
 
     test "allow defining default changeset functions for context" do
       defmodule ContextDefault do
-        MaCrud.Context.default(create: :create_changeset, update: :update_changeset)
-        MaCrud.Context.generate_functions(MaCrud.User)
+        use MaCrud
+        MaCrud.default(create: :create_changeset, update: :update_changeset)
+        MaCrud.generate(MaCrud.User)
       end
 
       assert {:ok, %User{username: "create_changeset"} = user} = ContextDefault.create_user(@user)
@@ -267,7 +273,8 @@ defmodule MaCrud.ContextTest do
   describe "Define which functions are to be generated" do
     test "using only" do
       defmodule ContextOnly do
-        MaCrud.Context.generate_functions(MaCrud.User, only: [:create, :list])
+        use MaCrud
+        MaCrud.generate(MaCrud.User, only: [:create, :list])
       end
 
       assert Enum.member?(ContextOnly.__info__(:functions), {:create_user, 1})
@@ -281,7 +288,8 @@ defmodule MaCrud.ContextTest do
 
     test "using except" do
       defmodule ContextExcept do
-        MaCrud.Context.generate_functions(MaCrud.User,
+        use MaCrud
+        MaCrud.generate(MaCrud.User,
           except: [:exists, :get, :update, :list, :delete]
         )
       end
@@ -294,8 +302,9 @@ defmodule MaCrud.ContextTest do
 
     test "using default only" do
       defmodule ContextOnlyDefault do
-        MaCrud.Context.default(only: [:create, :list])
-        MaCrud.Context.generate_functions(MaCrud.User)
+        use MaCrud
+        MaCrud.default(only: [:create, :list])
+        MaCrud.generate(MaCrud.User)
       end
 
       assert Enum.member?(ContextOnlyDefault.__info__(:functions), {:create_user, 1})
@@ -309,8 +318,9 @@ defmodule MaCrud.ContextTest do
 
     test "using default except" do
       defmodule ContextExceptDefault do
-        MaCrud.Context.default(except: [:get, :update, :list, :delete])
-        MaCrud.Context.generate_functions(MaCrud.User)
+        use MaCrud
+        MaCrud.default(except: [:get, :update, :list, :delete])
+        MaCrud.generate(MaCrud.User)
       end
 
       assert Enum.member?(ContextExceptDefault.__info__(:functions), {:create_user, 1})
@@ -323,7 +333,8 @@ defmodule MaCrud.ContextTest do
   describe "Generate function name" do
     test "underscore camelized schema name correctly" do
       defmodule ContextUnderscore do
-        MaCrud.Context.generate_functions(MaCrud.CamelizedSchemaName)
+        use MaCrud
+        MaCrud.generate(MaCrud.CamelizedSchemaName)
       end
 
       assert {:ok, %MaCrud.CamelizedSchemaName{content: "x"} = record} =
@@ -334,7 +345,8 @@ defmodule MaCrud.ContextTest do
 
     test "pluralize name from schema source" do
       defmodule ContextPluralize do
-        MaCrud.Context.generate_functions(MaCrud.Category)
+        use MaCrud
+        MaCrud.generate(MaCrud.Category)
       end
 
       assert {:ok, %MaCrud.Category{content: "x"} = record} =
@@ -347,10 +359,11 @@ defmodule MaCrud.ContextTest do
   describe "Define Repo" do
     test "by default" do
       defmodule ContextRepoDefault do
+        use MaCrud
         alias MaCrud.User
 
-        MaCrud.Context.default(repo: MaCrud.Repo)
-        MaCrud.Context.generate_functions(User)
+        MaCrud.default(repo: MaCrud.Repo)
+        MaCrud.generate(User)
       end
 
       username = @user.username
@@ -359,9 +372,10 @@ defmodule MaCrud.ContextTest do
 
     test "by schema" do
       defmodule ContextRepoSchema do
+        use MaCrud
         alias MaCrud.User
 
-        MaCrud.Context.generate_functions(User, repo: MaCrud.Repo)
+        MaCrud.generate(User, repo: MaCrud.Repo)
       end
 
       username = @user.username
